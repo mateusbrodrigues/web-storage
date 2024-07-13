@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML5 Local Storage</title>
+    <!-- Fluid viewport -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.fluid.classless.min.css"
+    />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>HTML5 Local Storage</h1>
+      </section>
+      <article>
+        <form onsubmit="return false">
+          <fieldset class="grid">
+            <input
+              name="key"
+              placeholder="Key"
+              aria-label="Key"
+              autocomplete="off"
+              autofocus
+              required
+            />
+            <input
+              type="text"
+              name="keyValue"
+              placeholder="Value"
+              aria-label="Value"
+              autocomplete="off"
+              required
+            />
+            <button type="submit">Save</button>
+          </fieldset>
+        </form>
+      </article>
+      <article>
+        <h2>List Values</h2>
+      </article>
+    </main>
+  </body>
+</html>
