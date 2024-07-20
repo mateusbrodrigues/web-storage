@@ -1,3 +1,10 @@
+import {
+  get,
+  set,
+  entries,
+  del,
+} from "https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm";
+
 class App {
   constructor() {
     this.initializeForm();
@@ -6,10 +13,10 @@ class App {
 
   initializeForm() {
     const form = document.querySelector("form");
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
       console.log("form submitted");
-      this.save({ key: form.key.value, value: form.keyValue.value });
+      await this.save({ key: form.key.value, value: form.keyValue.value });
       this.listValues();
       form.reset();
       form.key.disabled = false;
@@ -17,37 +24,36 @@ class App {
     });
   }
 
-  save({ key, value }) {
-    console.log("saving data...");
-    window.localStorage.setItem(key, value);
+  async save({ key, value }) {
+    console.log("saving data...", key, value);
+    return set(key, value).then(() => console.log("value saved"));
   }
 
-  listValues() {
+  async listValues() {
     console.log("listing data...");
-    const ls = window.localStorage;
-    if (!ls.length) {
+    const keyValueList = await entries();
+    if (!keyValueList.length) {
       this.resetTable();
       return;
     }
-    const lsKeys = Object.keys(ls);
-    const allValues = lsKeys.map(this.toHTML).join("");
+    const allValues = keyValueList.map(this.toHTML).join("");
     this.addToHTML(allValues);
   }
 
-  toHTML(key) {
-    const value = window.localStorage.getItem(key);
+  toHTML(entry) {
+    const [key, value] = entry;
     const html = `
-      <tr>
-        <th scope="row">${key}</th>
-        <td>${value}</td>
-        <td style="width: 30px">
-          <span style="cursor: pointer" onclick="app.edit('${key}')">✏️</span>
-        </td>
-        <td style="width: 30px">
-          <span style="cursor: pointer" onclick="app.delete('${key}')">🗑️</span>
-        </td>
-      </tr>
-    `;
+        <tr>
+          <th scope="row">${key}</th>
+          <td>${value}</td>
+          <td style="width: 30px">
+            <span style="cursor: pointer" onclick="app.edit('${key}')">✏️</span>
+          </td>
+          <td style="width: 30px">
+            <span style="cursor: pointer" onclick="app.delete('${key}')">🗑️</span>
+          </td>
+        </tr>
+      `;
     return html;
   }
 
@@ -63,24 +69,25 @@ class App {
     listValues.innerHTML = '<td colSpan="4">No data available</td>';
   }
 
-  edit(key) {
+  async edit(key) {
     console.log(`editing the key: ${key}`);
     const form = document.querySelector("form");
-    const value = window.localStorage.getItem(key);
+    const value = await get(key);
     form.key.disabled = true;
     form.key.value = key;
     form.keyValue.value = value;
   }
 
-  delete(key) {
+  async delete(key) {
     if (confirm("Are you sure?")) {
-      window.localStorage.removeItem(key);
+      await del(key);
       this.listValues();
     }
   }
 }
 
-// TODO: edit values: fill the form, alter the value and save
 // TODO: use html5 dialog instead of confirm
 
 const app = new App();
+// this is ugly, try to avoid it as much as possible
+window.app = app;
