@@ -7,7 +7,7 @@ async function extractCEPsOnly() {
   return cepList;
 }
 
-async function fetchCEPData(cep) {
+export async function fetchCEPData(cep) {
   await new Promise((resolve) => setTimeout(resolve, 400));
   // const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
   const response = await fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`);
@@ -15,7 +15,7 @@ async function fetchCEPData(cep) {
   return data;
 }
 
-function cepFactory(cepData) {
+export function cepFactory(cepData) {
   return {
     zipCode: cepData.cep.replace("-", ""),
     state: cepData.uf || cepData.state,
