@@ -19,6 +19,8 @@
             type="text"
             name="cep"
             placeholder="Enter your CEP"
+            required
+            pattern="\d{5}-?\d{3}"
             autocomplete="off"
           />
           <button type="submit">Get</button>
@@ -28,6 +30,30 @@
         * <a href="#" onclick="return false;">Install data locally</a> so you
         can search CEP offline.
       </p>
+      <table>
+        <tbody>
+          <tr>
+            <th>CEP</th>
+            <td></td>
+          </tr>
+          <tr>
+            <th>State</th>
+            <td></td>
+          </tr>
+          <tr>
+            <th>Location</th>
+            <td></td>
+          </tr>
+          <tr>
+            <th>Place</th>
+            <td></td>
+          </tr>
+          <tr>
+            <th>Neighborhood</th>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
     </main>
   </body>
 </html>
