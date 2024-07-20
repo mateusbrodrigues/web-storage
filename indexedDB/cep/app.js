@@ -37,8 +37,8 @@ console.timeEnd("fetch data");
 
 const db = new Dexie("zipCodeDatabase");
 
-db.version(1).stores({
-  zipCode: "++id,zipCode,location",
+db.version(2).stores({
+  zipCode: "&zipCode,location",
 });
 
 console.time("Saving IndexedDB...");
