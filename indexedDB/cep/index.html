@@ -13,8 +13,21 @@
   </head>
   <body>
     <main>
-      <h1>Saving CEP data to IndexedDB</h1>
-      <button>Install data</button>
+      <form onsubmit="return false;">
+        <fieldset role="group">
+          <input
+            type="text"
+            name="cep"
+            placeholder="Enter your CEP"
+            autocomplete="off"
+          />
+          <button type="submit">Get</button>
+        </fieldset>
+      </form>
+      <p>
+        * <a href="#" onclick="return false;">Install data locally</a> so you
+        can search CEP offline.
+      </p>
     </main>
   </body>
 </html>
