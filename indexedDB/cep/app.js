@@ -12,40 +12,35 @@ async function extractCEPsOnly() {
 async function fetchCEPData(cep) {
   const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
   const data = await response.json();
-  console.log("response data: ", data);
   return data;
 }
 
+function cepFactory(cepData) {
+  return {
+    zipCode: cepData.cep.replace("-", ""),
+    state: cepData.uf,
+    location: cepData.localidade,
+    publicPlace: cepData.logradouro,
+    neighborhood: cepData.bairro,
+    phoneCode: cepData.ddd,
+  };
+}
+
+console.time("fetch data");
 const cepList = await extractCEPsOnly();
-console.log(cepList[0]);
-const cepData = await fetchCEPData(cepList[0]);
-console.log(cepData);
+const promiseList = await Promise.allSettled(cepList.map(fetchCEPData));
+const cepListData = promiseList
+  .filter((pl) => pl.status === "fulfilled")
+  .map((pl) => pl.value);
+const cepMappedList = cepListData.map(cepFactory);
+console.timeEnd("fetch data");
 
-// const db = new Dexie('zipCodeDatabase');
+const db = new Dexie("zipCodeDatabase");
 
-// db.version(1).stores({
-//   zipCode: '++id,cep,localidade',
-// });
+db.version(1).stores({
+  zipCode: "++id,zipCode,location",
+});
 
-// // {
-// //   "cep": "37537-144",
-// //   "logradouro": "Rua Três",
-// //   "complemento": "",
-// //   "unidade": "",
-// //   "bairro": "Viana",
-// //   "localidade": "Santa Rita do Sapucaí",
-// //   "uf": "MG",
-// //   "ibge": "3159605",
-// //   "gia": "",
-// //   "ddd": "35",
-// //   "siafi": "5191"
-// // }
-
-// db.zipCode.add({
-//   zipCode: data.cep.replace('-', ''),
-//   state: data.uf,
-//   location: data.localidade,
-//   publicPlace: data.logradouro,
-//   neighborhood: data.bairro,
-//   phoneCode: data.ddd,
-// });
+console.time("Saving IndexedDB...");
+await db.zipCode.bulkPut(cepMappedList);
+console.timeEnd("Saving IndexedDB...");
